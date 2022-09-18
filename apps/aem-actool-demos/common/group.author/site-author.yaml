@@ -6,6 +6,14 @@
 - DEF groupPrefix="Adobe-AEM-${environmentType}"
 - DEF groupPrefixAll="Adobe-AEM-ALL"
 
+- global_config:
+   autoCreateTestUsers: 
+     createForGroupNamesRegEx: "Adobe-AEM-.*-brand.*" 
+     prefix: "testuser-"
+     password: "$[secret:TEST_USER_PASSWORD]"
+     name: "Test User %{lowerCase(group.name)}"
+     path: /home/users/brands/test-users
+
 - group_config:
 
     - FOR brand IN ${brands}:
@@ -98,11 +106,7 @@
                            <jcr:root jcr:primaryType="cq:Tag"
                                jcr:title="${upperCase(brand)}"
                                sling:resourceType="cq/tagging/components/tag">
-                           </jcr:root>
-                           
-          - path: /content/cq:tags/i18n
-            permission: allow
-            actions: read          
+                           </jcr:root>         
 
           - path: /content/dam/${brand}
             permission: allow
@@ -157,10 +161,6 @@
             actions: create,modify,delete,replicate
 
           - path: /content/dam/${brand}
-            permission: allow
-            actions: create,modify,delete,replicate
-            
-          - path: /content/cq:tags/i18n
             permission: allow
             actions: create,modify,delete,replicate
 
@@ -246,10 +246,6 @@
                privileges: rep:readProperties
 
              - path: /content/campaigns/${brand}/${site.name}
-               permission: allow
-               actions: read
-               
-             - path: /content/cq:tags/i18n
                permission: allow
                actions: read
 
@@ -351,10 +347,6 @@
                actions: create,modify,delete,replicate
 
              - path: /content/campaigns/${brand}/${site.name}
-               permission: allow
-               actions: create,modify,delete,replicate
-               
-             - path: /content/cq:tags/i18n
                permission: allow
                actions: create,modify,delete,replicate
 
