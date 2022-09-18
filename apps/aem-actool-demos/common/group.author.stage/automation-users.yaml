@@ -25,13 +25,29 @@
       
        - path: /content/${brand}/automation
          permission: allow
-         actions: read,modify,create,delete
+         actions: read,modify,create,delete,replicate
+         initialContent: |
+             <jcr:root jcr:primaryType="cq:Page">
+                 <jcr:content jcr:primaryType="cq:PageContent"
+                     jcr:title="Automation Testing"
+                     sling:resourceType="core/wcm/components/page/v1/page">
+                 </jcr:content>
+             </jcr:root>
       
        - path: /content/dam/${brand}/automation
          permission: allow
-         actions: read,modify,create,delete
+         actions: read,modify,create,delete,replicate
+         initialContent: |
+             <jcr:root jcr:primaryType="sling:OrderedFolder">
+                 <jcr:content jcr:primaryType="nt:unstructured"
+                     jcr:title="Automation Testing">
+                 </jcr:content>
+             </jcr:root>
       
        - path: /content/experience-fragments/${brand}/automation
          permission: allow
-         actions: read,modify,create,delete
-     
+         actions: read,modify,create,delete,replicate
+         initialContent: |
+             <jcr:root jcr:primaryType="sling:OrderedFolder"
+                 jcr:title="Automation Testing">
+             </jcr:root>
