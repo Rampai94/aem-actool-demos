@@ -1,0 +1,64 @@
+- group_config:
+
+    - base-developer:
+
+       - name: base-developer
+         isMemberOf: operators
+         path: /home/groups/brands/base 
+         
+
+- ace_config:
+
+    - base-developer:
+
+       - path: /
+         permission: allow
+         privileges: jcr:read
+       
+       - path: /apps
+         permission: allow
+         privileges: jcr:read
+         
+       - path: /libs
+         permission: allow
+         privileges: jcr:read
+       
+       - path: /system
+         permission: allow
+         privileges: jcr:read
+
+       - path: /conf
+         permission: allow
+         privileges: jcr:read
+         
+       - path: /content
+         permission: allow
+         privileges: jcr:read
+         
+       # Added this rule to enable language copy feature
+       - path: /content/projects
+         permission: allow
+         actions: read,modify,create,delete,acl_read,acl_edit
+         
+       - path: /etc
+         permission: allow
+         privileges: jcr:read
+       
+       - path: /etc
+         permission: allow
+         actions: read,modify,create,delete,replicate
+         restrictions:
+           rep:glob: '/map.*'
+
+       - path: /etc/packages/my_packages
+         permission: deny
+         actions: modify,create,delete,replicate
+       
+       - path: /oak:index
+         permission: allow
+         privileges: jcr:read
+       
+       - path: /var
+         permission: allow
+         privileges: jcr:read
+         

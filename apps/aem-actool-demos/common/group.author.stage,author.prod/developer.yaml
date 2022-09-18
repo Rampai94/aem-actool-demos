@@ -1,0 +1,32 @@
+- DEF groupPrefix="Adobe-AEM-ALL"
+
+- group_config:
+     
+    - ${groupPrefix}-aem-developer:
+
+       - name: AEM Developer
+         isMemberOf: base-developer
+         externalId: "${groupPrefix}-aem-developer;ims"
+
+
+- ace_config:
+
+    - ${groupPrefix}-aem-developer:
+
+       - path: /
+         permission: allow
+         actions: acl_read
+         
+       - path: /etc/packages
+         permission: allow
+         actions: modify,create,delete,replicate
+       
+       - path: /home
+         permission: allow
+         actions: read,acl_read
+         
+       # so that aem developer can view the system user permissions
+       - path: /home/users/system
+         permission: allow
+         actions: read,acl_read
+         

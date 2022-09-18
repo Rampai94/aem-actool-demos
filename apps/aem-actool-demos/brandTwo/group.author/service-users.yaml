@@ -1,0 +1,19 @@
+- user_config:
+
+  - brandTwo-service-user:
+  
+    - name: brandTwo-service-user
+      description: Used for brandTwo to perform CRUD operations
+      path: /home/users/system/brandTwo
+      isSystemUser: true
+      isMemberOf: brandTwo-base,workflow-users
+
+- ace_config:
+
+  - brandTwo-service-user:
+      
+    - path: /content/brandTwo
+      permission: allow
+      actions: read,modify,create,delete,replicate
+      
+      

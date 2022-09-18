@@ -1,0 +1,26 @@
+# Environment types in [DEV,QA,STG,PRD]
+- DEF environmentType=$[env:ACL_ENVIRONMENT_TYPE;default=PRD]
+
+# You could have common set of User Admins but have separate administrators per environment
+- DEF groupPrefix="Adobe-AEM-${environmentType}"
+- DEF groupPrefixAll="Adobe-AEM-ALL"
+
+- group_config:
+
+    - ${groupPrefixAll}-user-admin:
+
+        - name: User Admin
+          description: Users expected to do access management
+          externalId: "${groupPrefixAll}-user-admin;ims"
+
+    - ${groupPrefix}-administrators:
+
+        - name: Admin
+          description: Users with Administrator privileges
+          isMemberOf: administrators
+          externalId: "${groupPrefix}-administrators;ims"
+
+- ace_config:
+
+    # Uncomment to define User admin permissions here
+    # - ${groupPrefixAll}-user-admin:

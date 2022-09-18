@@ -1,0 +1,143 @@
+- DEF brands=[brandOne, brandTwo, brandThree]
+
+- DEF groupPrefix="Adobe-AEM-ALL"
+
+- group_config:
+
+    - FOR brand IN ${brands}:
+    
+       - ${groupPrefix}-${brand}-developer:
+          - name: ${upperCase(brand)} Developer
+            isMemberOf: base-developer,fragment-workflows
+            externalId: "${groupPrefix}-${brand}-developer;ims"
+            migrateFrom: ${brand}-developer
+
+       - FOR site IN CHILDREN OF /content/${brand}:
+        
+          - ${groupPrefix}-${brand}-${site.name}-developer:
+             - name: ${upperCase(brand)} ${site.title} Developer
+               isMemberOf: base-developer,fragment-workflows
+               externalId: "${groupPrefix}-${brand}-${site.name}-developer;ims"
+               migrateFrom: ${brand}-${site.name}-developer
+
+
+- ace_config:
+
+    - FOR brand IN ${brands}:
+    
+       - ${groupPrefix}-${brand}-developer:
+          - path: /content/cq:tags/${brand}
+            permission: allow
+            actions: modify,create,delete,replicate
+          
+          - path: /apps/${brand}
+            permission: allow
+            actions: modify,create,delete,replicate
+         
+          - path: /conf/${brand}
+            permission: allow
+            actions: modify,create,delete,replicate
+            
+          - path: /conf/global/settings/dam/adminui-extension
+            permission: allow
+            actions: read,replicate
+            
+          - path: /conf/global/settings/wcm/policies
+            permission: allow
+            actions: read,replicate
+            
+          - path: /conf/global/settings/cloudconfigs/translation
+            permission: allow
+            actions: read,replicate
+              
+          - path: /content/${brand}
+            permission: allow
+            actions: modify,create,delete,replicate
+         
+          - path: /content/dam/${brand}
+            permission: allow
+            actions: modify,create,delete,replicate
+            
+          - path: /content/campaigns/${brand}
+            permission: allow
+            actions: modify,create,delete,replicate
+
+          - path: /content/experience-fragments/${brand}
+            permission: allow
+            actions: modify,create,delete,replicate
+              
+          - path: /etc/packages/${brand}
+            permission: allow
+            actions: modify,create,delete,replicate
+            initialContent: |
+                              <jcr:root jcr:primaryType="sling:Folder">
+                              </jcr:root>
+                
+          - path: /var/workflow/models/${brand}
+            permission: allow
+            actions: read,modify,create,delete
+        
+       - FOR site IN CHILDREN OF /content/${brand}:
+        
+          - ${groupPrefix}-${brand}-${site.name}-developer:
+             - path: /content/cq:tags/${brand}/${site.name}
+               permission: allow
+               actions: modify,create,delete,replicate
+             
+             - path: /apps/${brand}/${site.name}
+               permission: allow
+               actions: modify,create,delete,replicate
+             
+             - path: /conf/${brand}/${site.name}
+               permission: allow
+               actions: modify,create,delete,replicate
+
+             - path: /conf/global/settings/dam/adminui-extension
+               permission: allow
+               actions: read,replicate
+
+             - path: /conf/global/settings/wcm/policies
+               permission: allow
+               actions: read,replicate               
+              
+             - path: /content/${brand}/${site.name}
+               permission: allow
+               actions: modify,create,delete,replicate
+         
+             - path: /content/dam/${brand}/${site.name}
+               permission: allow
+               actions: modify,create,delete,replicate
+               
+             - path: /content/campaigns/${brand}/${site.name}
+               permission: allow
+               actions: modify,create,delete,replicate
+
+             - path: /content/experience-fragments/${brand}/${site.name}
+               permission: allow
+               actions: modify,create,delete,replicate
+              
+             - path: /etc/packages/${brand}/${site.name}
+               permission: allow
+               actions: modify,create,delete,replicate
+               initialContent: |
+                              <jcr:root jcr:primaryType="sling:Folder">
+                              </jcr:root>
+                
+             - path: /var/workflow/models/${brand}
+               permission: allow
+               actions: read
+             
+             - path: /var/workflow/models/${brand}/${site.name}
+               permission: allow
+               actions: modify,create,delete
+
+             # For commerce products access, a boolean property "isCommerce" needs to be present in site jcr:content node  
+             - IF ${site["jcr:content"]["isCommerce"]}:
+
+                - path: /var/commerce/products/${brand}
+                  permission: allow
+                  actions: read
+
+                - path: /var/commerce/products/${brand}/${site.name}
+                  permission: allow
+                  actions: create,modify,delete,replicate

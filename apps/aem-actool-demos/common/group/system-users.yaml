@@ -1,0 +1,20 @@
+- user_config:
+
+    - email-system-user:
+
+       - name: email-system-user
+         isMemberOf: 
+         path: /home/users/system/brands
+         isSystemUser: true         
+
+- ace_config:
+
+    - email-system-user:
+    
+       - path: /apps
+         permission: allow
+         privileges: jcr:read
+
+       - path: /etc/notification/email
+         permission: allow
+         privileges: jcr:read

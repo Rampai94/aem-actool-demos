@@ -1,0 +1,18 @@
+- user_config:
+
+  - brandThree-service-user:
+  
+    - name: brandThree-service-user
+      description: Used for brandThree to perform CRUD operations
+      path: /home/users/system/brandThree
+      isSystemUser: true
+      isMemberOf: brandThree-base,workflow-users
+      
+- ace_config:
+
+  - brandThree-service-user:
+      
+    - path: /content/brandThree
+      permission: allow
+      actions: read,modify,create,delete,replicate
+      

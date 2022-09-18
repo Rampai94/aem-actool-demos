@@ -1,0 +1,200 @@
+- group_config:
+
+    - base-group:
+
+       - name: Base Group
+         description: Group that provides OOTB permissions used only for inheritance.
+         isMemberOf: everyone,fragment-workflows
+         path: /home/groups/brands/base
+         
+    - base-brands:
+
+       - name: Brands Base Group
+         description: Group that provides permissions to global folders common across brands.
+         isMemberOf: base-group
+         path: /home/groups/brands/base
+         
+- ace_config:
+
+    - base-group:
+
+       - path: /
+         permission: allow
+         privileges: jcr:read
+         restrictions:
+           rep:glob: ''
+
+       - path: /
+         permission: allow
+         privileges: rep:readProperties
+
+       - path: /
+         permission: allow
+         privileges: jcr:read
+         restrictions:
+           rep:glob: '*/jcr:content*'
+
+       - path: /apps
+         permission: allow
+         privileges: jcr:read
+
+       - path: /conf
+         permission: allow
+         privileges: jcr:read
+         restrictions:
+           rep:glob: ''
+
+       - path: /conf
+         permission: allow
+         privileges: rep:readProperties
+         
+       - path: /conf
+         permission: allow
+         privileges: jcr:read
+         restrictions:
+           rep:glob: /*/dam/*
+
+       - path: /conf/global
+         permission: allow
+         privileges: jcr:read
+
+       - path: /content
+         permission: allow
+         privileges: jcr:read
+         restrictions:
+           rep:glob: ''
+       
+       - path: /content
+         permission: allow
+         privileges: jcr:read
+         restrictions:
+           rep:glob: '/:childOrder'
+       
+       - path: /content
+         permission: allow
+         privileges: rep:readProperties
+
+       - path: /content/catalogs
+         permission: allow
+         privileges: jcr:read
+         restrictions:
+           rep:glob: ''
+       
+       - path: /content/catalogs
+         permission: allow
+         privileges: rep:readProperties
+       
+       - path: /content/cq:tags
+         permission: allow
+         privileges: jcr:read
+         restrictions:
+           rep:glob: ''
+
+       - path: /content/cq:tags
+         permission: allow
+         privileges: rep:readProperties
+
+       - path: /content/dam
+         permission: allow
+         privileges: jcr:read
+         restrictions:
+           rep:glob: ''
+       
+       - path: /content/dam
+         permission: allow
+         privileges: jcr:read
+         restrictions:
+           rep:glob: '/:childOrder'
+       
+       - path: /content/dam
+         permission: allow
+         privileges: rep:readProperties
+
+       - path: /content/dam/projects
+         permission: allow
+         privileges: jcr:read
+         restrictions:
+           rep:glob: ''
+
+       - path: /content/dam/projects
+         permission: allow
+         privileges: rep:readProperties
+       
+       - path: /content/experience-fragments
+         permission: allow
+         privileges: jcr:read
+         restrictions:
+           rep:glob: ''
+
+       - path: /content/experience-fragments
+         permission: allow
+         privileges: rep:readProperties
+         
+       - path: /content/projects
+         permission: allow
+         privileges: jcr:read
+         restrictions:
+           rep:glob: ''
+
+       - path: /content/projects
+         permission: allow
+         privileges: rep:readProperties
+       
+       - path: /etc
+         permission: allow
+         privileges: jcr:read
+         restrictions:
+           rep:glob: ''
+
+       - path: /etc
+         permission: allow
+         privileges: rep:readProperties
+
+       - path: /etc/cloudservices
+         permission: allow
+         privileges: jcr:read
+
+       - path: /etc/linkchecker
+         permission: allow
+         privileges: jcr:read
+
+       - path: /etc/packages
+         permission: allow
+         privileges: jcr:read
+         restrictions:
+           rep:glob: ''
+
+       - path: /etc/packages
+         permission: allow
+         privileges: rep:readProperties
+         
+       - path: /home/users
+         permission: allow
+         privileges: jcr:read
+
+       - path: /libs
+         permission: allow
+         privileges: jcr:read
+
+       - path: /var
+         permission: allow
+         privileges: jcr:read
+         restrictions:
+           rep:glob: ''
+
+       - path: /var
+         permission: allow
+         privileges: rep:readProperties
+
+       - path: /var/commerce
+         permission: allow
+         privileges: jcr:read
+         restrictions:
+           rep:glob: ''
+
+       - path: /var/commerce
+         permission: allow
+         privileges: rep:readProperties
+         
+    # Uncomment to add brands specific folder access common across divisions  
+    #- base-brands:

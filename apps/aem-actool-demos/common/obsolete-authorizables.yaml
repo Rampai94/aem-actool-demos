@@ -1,0 +1,4 @@
+- obsolete_authorizables:
+   - group-to-delete-one
+   - group-to-delete-two
+   - user-to-delete-one

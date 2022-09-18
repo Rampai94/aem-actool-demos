@@ -1,0 +1,17 @@
+- user_config:
+
+  - brandOne-service-user:
+  
+    - name: brandOne-service-user
+      description: Used for brandOne to perform CRUD operations
+      path: /home/users/system/brandOne
+      isSystemUser: true
+      isMemberOf: brandOne-base,workflow-users
+      
+- ace_config:
+
+  - brandOne-service-user:
+      
+    - path: /content/brandOne
+      permission: allow
+      actions: read,modify,create,delete,replicate

@@ -1,0 +1,35 @@
+# Country specific authoring groups
+-  DEF countrySites=:
+      brandTwo:
+      - siteOne
+      - siteTwo
+- DEF groupPrefixAll="Adobe-AEM-ALL"
+-  group_config:
+   -  FOR brand IN ${keys(countrySites)}:
+      -  FOR site IN ${countrySites[brand]}:
+         -  FOR country IN CHILDREN OF /content/${brand}/${lowerCase(site)}:
+            -  ${groupPrefixAll}-${brand}-${lowerCase(site)}-${country.name}-authors:
+               -  name: ${upperCase(brand)} ${site} ${upperCase(country.name)} Authors
+                  description: Country Specific Authors
+                  isMemberOf: ${brand}-${lowerCase(site)}-base
+                  externalId: ${groupPrefixAll}-${brand}-${lowerCase(site)}-${country.name}-authors;ims
+-  ace_config:
+   -  FOR brand IN ${keys(countrySites)}:
+      -  FOR site IN ${countrySites[brand]}:
+         -  FOR country IN CHILDREN OF /content/${brand}/${lowerCase(site)}:
+            -  ${groupPrefixAll}-${brand}-${lowerCase(site)}-${country.name}-authors:
+               -  path: /content/${brand}/${lowerCase(site)}/${country.name}
+                  permission: allow
+                  actions: create,modify,delete,replicate
+               -  path: /content/campaigns/${brand}/${lowerCase(site)}/${country.name}
+                  permission: allow
+                  actions: create,modify,delete,replicate
+               -  path: /content/cq:tags/${brand}/${lowerCase(site)}/${country.name}
+                  permission: allow
+                  actions: create,modify,delete,replicate
+               -  path: /content/dam/${brand}
+                  permission: allow
+                  actions: create,modify,delete,replicate
+               -  path: /content/experience-fragments/${brand}/${lowerCase(site)}/${country.name}
+                  permission: allow
+                  actions: create,modify,delete,replicate

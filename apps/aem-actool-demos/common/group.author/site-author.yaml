@@ -1,0 +1,385 @@
+# Environment types in [DEV,QA,STG,PRD]
+- DEF environmentType=$[env:ACL_ENVIRONMENT_TYPE;default=PRD]
+
+- DEF brands=[brandOne, brandTwo, brandThree]
+
+- DEF groupPrefix="Adobe-AEM-${environmentType}"
+- DEF groupPrefixAll="Adobe-AEM-ALL"
+
+- group_config:
+
+    - FOR brand IN ${brands}:
+
+       - ${brand}-base:
+          - name: ${upperCase(brand)} Base Group
+            description: Base group for brand specific read access
+            isMemberOf: base-brands
+            path: /home/groups/${brand}
+
+       - ${groupPrefix}-${brand}-authors:
+          - name: ${upperCase(brand)} Authors
+            description: brand Authors group. Is environment specific.
+            isMemberOf: ${brand}-base, projects-administrators
+            externalId: "${groupPrefix}-${brand}-authors;ims"
+
+       - ${groupPrefixAll}-${brand}-content-reviewer:
+          - name: ${upperCase(brand)} Content Reviewer
+            description: brand Content Reviewer Group. Can annotate and provide comments as part of content review.
+            isMemberOf: ${brand}-base
+            externalId: "${groupPrefixAll}-${brand}-content-reviewer;ims"
+
+
+       - FOR site IN CHILDREN OF /content/${brand}:
+
+          - ${brand}-${site.name}-base:
+             - name: ${upperCase(brand)} ${site.title} Base Group
+               description: Base group for site specific read access
+               isMemberOf: base-brands
+               path: /home/groups/${brand}/${site.name}
+
+          - ${groupPrefixAll}-${brand}-${site.name}-authors:
+             - name: ${upperCase(brand)} ${site.title} Authors
+               description: Site specific Authors
+               isMemberOf: ${brand}-${site.name}-base
+               externalId: "${groupPrefixAll}-${brand}-${site.name}-authors;ims"
+
+          - ${groupPrefixAll}-${brand}-${site.name}-admin-authors:
+             - name: ${upperCase(brand)} ${site.title} Admin Authors
+               description: Site specific Content Admin. Can do additional tasks like edit templates or create language copy.
+               isMemberOf: ${groupPrefixAll}-${brand}-${site.name}-authors
+               externalId: "${groupPrefixAll}-${brand}-${site.name}-admin-authors;ims"
+
+
+- ace_config:
+
+    - FOR brand IN ${brands}:
+
+       - ${brand}-base:
+
+          - path: /conf/${brand}
+            permission: allow
+            actions: read,replicate
+            initialContent: |
+                           <jcr:root jcr:primaryType="sling:Folder"
+                              jcr:title="${upperCase(brand)}">
+                           </jcr:root>
+            
+          - path: /conf/global/settings/dam/adminui-extension
+            permission: allow
+            actions: read,replicate
+
+          - path: /conf/global/settings/wcm/policies
+            permission: allow
+            actions: read,replicate
+            
+          - path: /conf/global/settings/cloudconfigs/translation
+            permission: allow
+            actions: read,replicate
+
+          - path: /content/${brand}
+            permission: allow
+            actions: read
+            initialContent: |
+                           <jcr:root jcr:primaryType="cq:Page">
+                               <jcr:content jcr:primaryType="cq:PageContent"
+                                   jcr:title="${upperCase(brand)}"
+                                   sling:resourceType="core/wcm/components/page/v1/page">
+                               </jcr:content>
+                           </jcr:root>
+
+          - path: /content/campaigns/${brand}
+            permission: allow
+            actions: read
+
+          - path: /content/cq:tags/${brand}
+            permission: allow
+            actions: read
+            initialContent: |
+                           <jcr:root jcr:primaryType="cq:Tag"
+                               jcr:title="${upperCase(brand)}"
+                               sling:resourceType="cq/tagging/components/tag">
+                           </jcr:root>
+                           
+          - path: /content/cq:tags/i18n
+            permission: allow
+            actions: read          
+
+          - path: /content/dam/${brand}
+            permission: allow
+            actions: read
+            initialContent: |
+                           <jcr:root jcr:primaryType="sling:OrderedFolder">
+                               <jcr:content jcr:primaryType="nt:unstructured"
+                                   jcr:title="${upperCase(brand)}">
+                               </jcr:content>
+                           </jcr:root>
+
+          - path: /content/experience-fragments/${brand}
+            permission: allow
+            actions: read
+            initialContent: |
+                           <jcr:root jcr:primaryType="sling:OrderedFolder"
+                               jcr:title="${upperCase(brand)}">
+                           </jcr:root>
+
+          - path: /var/workflow/models/${brand}
+            permission: allow
+            actions: read
+            initialContent: |
+                           <jcr:root jcr:primaryType="sling:Folder"
+                               jcr:title="${upperCase(brand)}">
+                           </jcr:root>
+
+          - path: /var/commerce/products/${brand}
+            permission: allow
+            actions: read
+            initialContent: |
+                           <jcr:root jcr:primaryType="sling:OrderedFolder"
+                               jcr:title="${upperCase(brand)}">
+                           </jcr:root>
+
+       - ${groupPrefix}-${brand}-authors:
+
+          - path: /conf/${brand}
+            permission: allow
+            actions: create,modify,delete,replicate
+
+          - path: /content/${brand}
+            permission: allow
+            actions: create,modify,delete,replicate
+
+          - path: /content/campaigns/${brand}
+            permission: allow
+            actions: create,modify,delete,replicate
+
+          - path: /content/cq:tags/${brand}
+            permission: allow
+            actions: create,modify,delete,replicate
+
+          - path: /content/dam/${brand}
+            permission: allow
+            actions: create,modify,delete,replicate
+            
+          - path: /content/cq:tags/i18n
+            permission: allow
+            actions: create,modify,delete,replicate
+
+          - path: /content/experience-fragments/${brand}
+            permission: allow
+            actions: create,modify,delete,replicate
+
+          - path: /var/commerce/products/${brand}
+            permission: allow
+            actions: create,modify,delete,replicate
+
+       # Using prefix all since reviewer would only be having annotate permissions which means one group should be enough across environments
+       - ${groupPrefixAll}-${brand}-content-reviewer:
+          # Provide annotate permission to content reviewer
+          - path: /content/${brand}
+            permission: allow
+            privileges: rep:write
+            restrictions:
+              rep:glob: '*/jcr:content/*'
+
+       - FOR site IN CHILDREN OF /content/${brand}:
+
+          - ${brand}-${site.name}-base:
+
+             # Allow read to brand (parent) folder
+             - path: /conf/${brand}
+               permission: allow
+               actions: read,replicate
+            
+             - path: /conf/global/settings/dam/adminui-extension
+               permission: allow
+               actions: read,replicate
+
+             - path: /conf/global/settings/wcm/policies
+               permission: allow
+               actions: read,replicate
+               
+             - path: /conf/global/settings/cloudconfigs/translation
+               permission: allow
+               actions: read,replicate
+
+             - path: /conf/${brand}
+               permission: allow
+               privileges: rep:readProperties
+
+             - path: /conf/${brand}/${site.name}
+               permission: allow
+               actions: read
+               initialContent: |
+                              <jcr:root jcr:primaryType="sling:Folder"
+                                 jcr:title="${site.title}">
+                              </jcr:root>
+
+             - path: /content/${brand}
+               permission: allow
+               actions: read
+               restrictions:
+                 rep:glob: ''
+
+             - path: /content/${brand}
+               permission: allow
+               privileges: rep:readProperties
+
+             - path: /content/${brand}/${site.name}
+               permission: allow
+               actions: read
+               initialContent: |
+                             <jcr:root jcr:primaryType="cq:Page">
+                                <jcr:content jcr:primaryType="cq:PageContent"
+                                     jcr:title="${site.title}"
+                                     sling:resourceType="core/wcm/components/page/v1/page">
+                                </jcr:content>
+                             </jcr:root>
+
+             - path: /content/campaigns/${brand}
+               permission: allow
+               actions: read
+               restrictions:
+                 rep:glob: ''
+
+             - path: /content/campaigns/${brand}
+               permission: allow
+               privileges: rep:readProperties
+
+             - path: /content/campaigns/${brand}/${site.name}
+               permission: allow
+               actions: read
+               
+             - path: /content/cq:tags/i18n
+               permission: allow
+               actions: read
+
+             - path: /content/cq:tags/${brand}
+               permission: allow
+               actions: read
+               restrictions:
+                 rep:glob: ''
+
+             - path: /content/cq:tags/${brand}
+               permission: allow
+               privileges: rep:readProperties
+
+             - path: /content/cq:tags/${brand}/${site.name}
+               permission: allow
+               actions: read
+               initialContent: |
+                              <jcr:root jcr:primaryType="cq:Tag"
+                                  jcr:title="${site.title}"
+                                  sling:resourceType="cq/tagging/components/tag">
+                              </jcr:root>
+
+             - path: /content/dam/${brand}
+               permission: allow
+               actions: read
+               restrictions:
+                 rep:glob: ''
+
+             - path: /content/dam/${brand}
+               permission: allow
+               privileges: rep:readProperties
+
+             - path: /content/dam/${brand}/${site.name}
+               permission: allow
+               actions: read
+               initialContent: |
+                              <jcr:root jcr:primaryType="sling:OrderedFolder">
+                                  <jcr:content jcr:primaryType="nt:unstructured"
+                                      jcr:title="${site.title}">
+                                  </jcr:content>
+                              </jcr:root>
+
+             - path: /content/experience-fragments/${brand}
+               permission: allow
+               actions: read
+               restrictions:
+                 rep:glob: ''
+
+             - path: /content/experience-fragments/${brand}
+               permission: allow
+               privileges: rep:readProperties
+
+             - path: /content/experience-fragments/${brand}/${site.name}
+               permission: allow
+               actions: read
+               initialContent: |
+                              <jcr:root jcr:primaryType="sling:OrderedFolder"
+                                 jcr:title="${site.title}">
+                              </jcr:root>
+
+             - path: /var/commerce/products/${brand}
+               permission: allow
+               actions: read
+               restrictions:
+                 rep:glob: ''
+
+             - path: /var/commerce/products/${brand}
+               permission: allow
+               privileges: rep:readProperties
+
+             - IF ${site["jcr:content"]["isCommerce"]}:
+
+                - path: /var/commerce/products/${brand}/${site.name}
+                  permission: allow
+                  actions: read
+                  initialContent: |
+                          <jcr:root jcr:primaryType="sling:OrderedFolder"
+                          	jcr:title="${site.title}">
+                          </jcr:root>
+
+             - path: /var/workflow/models/${brand}
+               permission: allow
+               actions: read
+               restrictions:
+                 rep:glob: ''
+
+             - path: /var/workflow/models/${brand}/${site.name}
+               permission: allow
+               actions: read
+               initialContent: |
+                                <jcr:root jcr:primaryType="sling:Folder"
+                                   jcr:title="${site.title}">
+                                </jcr:root>
+
+          - ${groupPrefixAll}-${brand}-${site.name}-authors:
+
+             - path: /content/${brand}/${site.name}
+               permission: allow
+               actions: create,modify,delete,replicate
+
+             - path: /content/campaigns/${brand}/${site.name}
+               permission: allow
+               actions: create,modify,delete,replicate
+               
+             - path: /content/cq:tags/i18n
+               permission: allow
+               actions: create,modify,delete,replicate
+
+             - path: /content/cq:tags/${brand}/${site.name}
+               permission: allow
+               actions: create,modify,delete,replicate
+
+             - path: /content/dam/${brand}/${site.name}
+               permission: allow
+               actions: create,modify,delete,replicate
+
+             - path: /content/experience-fragments/${brand}/${site.name}
+               permission: allow
+               actions: create,modify,delete,replicate
+
+             # For commerce products access, a boolean property "isCommerce" needs to be present in site jcr:content node
+             - IF ${site["jcr:content"]["isCommerce"]}:
+
+                - path: /var/commerce/products/${brand}/${site.name}
+                  permission: allow
+                  actions: create,modify,delete,replicate
+
+          # TODO: Add permissions for creating language copy and live copy
+          - ${groupPrefixAll}-${brand}-${site.name}-admin-authors:
+
+             - path: /conf/${brand}/${site.name}
+               permission: allow
+               actions: create,modify,delete,replicate

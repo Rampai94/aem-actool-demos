@@ -1,0 +1,37 @@
+- DEF brands=[brandOne, brandTwo, brandThree]
+
+- user_config:
+
+  - automation-test-user:
+  
+    - name: automation-test-user
+      isMemberOf: base-brands,contributor
+      path: /home/users/brands/automation
+      password: $[secret:AUTOMATION_USER_PASSWORD]
+           
+- ace_config:
+
+  - automation-test-user:
+    
+    - path: /content
+      permission: allow
+      actions: read
+      
+    - path: /conf
+      permission: allow
+      actions: read
+      
+    - FOR brand IN ${brands}:
+      
+       - path: /content/${brand}/automation
+         permission: allow
+         actions: read,modify,create,delete
+      
+       - path: /content/dam/${brand}/automation
+         permission: allow
+         actions: read,modify,create,delete
+      
+       - path: /content/experience-fragments/${brand}/automation
+         permission: allow
+         actions: read,modify,create,delete
+     

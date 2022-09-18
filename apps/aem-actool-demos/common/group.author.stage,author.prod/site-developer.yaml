@@ -1,0 +1,44 @@
+- DEF brands=[brandOne, brandTwo, brandThree]
+
+- DEF groupPrefix="Adobe-AEM-ALL"
+
+- group_config:
+
+    - FOR brand IN ${brands}:
+
+       - ${groupPrefix}-${brand}-developer:
+          - name: ${upperCase(brand)} Developer
+            isMemberOf: base-developer
+            externalId: "${groupPrefix}-${brand}-developer;ims"
+
+       - FOR site IN CHILDREN OF /content/${brand}:
+
+          - ${groupPrefix}-${brand}-${site.name}-developer:
+             - name: ${upperCase(brand)} ${site.title} Developer
+               isMemberOf: base-developer
+               externalId: "${groupPrefix}-${brand}-${site.name}-developer;ims"
+
+# Groups get read access from base developer group. Additional permissions needed can be added as per use case.
+- ace_config:
+
+    - FOR brand IN ${brands}:
+
+       - ${groupPrefix}-${brand}-developer:
+
+          - path: /etc/packages/${brand}
+            permission: allow
+            actions: modify,create,delete,replicate
+            initialContent: |
+                              <jcr:root jcr:primaryType="sling:Folder">
+                              </jcr:root>
+
+       - FOR site IN CHILDREN OF /content/${brand}:
+
+          - ${groupPrefix}-${brand}-${site.name}-developer:
+
+             - path: /etc/packages/${brand}/${site.name}
+               permission: allow
+               actions: modify,create,delete,replicate
+               initialContent: |
+                              <jcr:root jcr:primaryType="sling:Folder">
+                              </jcr:root>
